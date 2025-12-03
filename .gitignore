@@ -1,13 +1,15 @@
-﻿# Ignorar archivos de compilación de xv6
+﻿# Ignorar archivos de compilación (binarios y temporales)
 *.o
 *.d
 *.asm
 *.sym
 fs.img
-kernel
-mkfs
-user/_*
 .gdbinit
+
+# Ignorar binarios específicos (pero NO las carpetas)
+kernel/kernel
+mkfs/mkfs
+user/_*
 
 # Ignorar configuración de CLion
 .idea/
