@@ -1,0 +1,19 @@
+﻿# Ignorar archivos de compilación de xv6
+*.o
+*.d
+*.asm
+*.sym
+fs.img
+kernel
+mkfs
+user/_*
+.gdbinit
+
+# Ignorar configuración de CLion
+.idea/
+cmake-build-debug/
+.vscode/
+
+# Ignorar sistema
+__pycache__/
+*.swp
