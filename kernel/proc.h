@@ -92,6 +92,15 @@ struct proc {
   int xstate;                  // Exit status to be returned to parent's wait
   int pid;                     // Process ID
 
+	//3.0
+  //---------Initiation of changes----------
+
+  //3.1 PRIORITY FIELD
+  // We added this integer to store the priority level of the process.
+  // Higher values mean higher importance in our new scheduling algorithm.
+  int priority;
+  //_____________________________
+
   // wait_lock must be held when using this:
   struct proc *parent;         // Parent process
 

@@ -125,6 +125,21 @@ found:
   p->pid = allocpid();
   p->state = USED;
 
+	//3.2 PRIORITY INITIALIZATION
+  // When a process is born, we must assign it a priority.
+  // For this academic demonstration, we use a "Hardcoded" trick:
+  // Even PIDs (2, 4, 6...) get High Priority (10).
+  // Odd PIDs (3, 5, 7...) get Low Priority (1).
+
+  if (p->pid % 2 == 0) {
+      p->priority = 10; // VIP Process
+  } else {
+      p->priority = 1;  // Normal Process
+  }
+  // This ensures we can SEE the difference in the video demonstration.
+  // In a real OS, this would be dynamic.
+  //_____________________________
+
   // Allocate a trapframe page.
   if((p->trapframe = (struct trapframe *)kalloc()) == 0){
     freeproc(p);
@@ -413,6 +428,7 @@ kwait(uint64 addr)
     sleep(p, &wait_lock);  //DOC: wait-sleep
   }
 }
+//__MIT INFO____
 
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.
@@ -421,6 +437,84 @@ kwait(uint64 addr)
 //  - swtch to start running that process.
 //  - eventually that process transfers control
 //    via swtch back to the scheduler.
+
+//3.3 PRIORITY SCHEDULER IMPLEMENTATION
+
+// We replaced the default Round-Robin algorithm with a
+// Priority-Based Scheduler. The goal is to always select
+// the RUNNABLE process with the highest 'priority' value.
+
+void
+scheduler(void)
+{
+  struct proc *p;
+  struct cpu *c = mycpu();
+
+  // Pointer to track the candidate with the highest priority found so far.
+  struct proc *high_p;
+
+  c->proc = 0;
+  for(;;){
+    // Avoid deadlock by ensuring devices can interrupt.
+    intr_on();
+
+    high_p = 0; // Reset candidate
+
+    // --- SELECTION PHASE ---
+    // We scan the entire process table to find the "Best Candidate".
+    // Unlike the original code that runs the first one it finds,
+    // we must compare them all to find the highest priority.
+    for(p = proc; p < &proc[NPROC]; p++) {
+      acquire(&p->lock);
+
+      if(p->state == RUNNABLE) {
+        // If we don't have a candidate yet, OR this process has
+        // higher priority than our current candidate...
+        if(high_p == 0 || p->priority > high_p->priority) {
+
+            if(high_p != 0) {
+                release(&high_p->lock); // Release the previous loser
+            }
+
+            high_p = p; // We have a new champion!
+            continue;   // Keep the lock on the champion and continue searching
+        }
+      }
+      release(&p->lock);
+    }
+
+    // --- EXECUTION PHASE ---
+    // If we found a winner in the selection phase, we execute it.
+    if(high_p != 0) {
+        p = high_p; // 'p' is now the highest priority process
+
+        p->state = RUNNING;
+        c->proc = p;
+
+        // [DEMO LOG]
+        // We print the decision to prove the algorithm works in the video.
+        // We only print if priority is high (10) to highlight VIP treatment.
+        if(p->priority > 5) {
+             printf("SCHEDULER: VIP Process PID %d (Priority %d) is running\n", p->pid, p->priority);
+        }
+
+        swtch(&c->context, &p->context);
+
+        // Process is done running for now.
+        c->proc = 0;
+        release(&p->lock);
+    }
+    else {
+        // If no process is runnable, we use the Wait For Interrupt (WFI)
+        // instruction to save power until an interrupt occurs.
+        intr_on();
+        asm volatile("wfi");
+    }
+  }
+}
+
+//________ORIGINAL CODE______
+/*
 void
 scheduler(void)
 {
@@ -461,6 +555,7 @@ scheduler(void)
     }
   }
 }
+*/
 
 // Switch to scheduler.  Must hold only p->lock
 // and have changed proc->state. Saves and restores
