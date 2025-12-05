@@ -212,7 +212,7 @@ alloc3_desc(int *idx)
   return 0;
 }
 
-//2.0
+//5.0
 //---------Initiation of changes----------
 
 // In this section, we modify the Disk Driver to include
@@ -227,7 +227,7 @@ virtio_disk_rw(struct buf *b, int write)
 
   acquire(&disk.vdisk_lock);
 
-  //2.1 I/O Inspection Logic
+  //5.1 I/O Inspection Logic
   // We intercept the buffer request 'b' to analyze its properties.
   // This provides real-time observability of the disk subsystem,
   // allowing us to see exactly which blocks are being accessed
