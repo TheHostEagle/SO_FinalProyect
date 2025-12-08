@@ -1,3 +1,32 @@
+/*************************************************/
+
+GROUP MEMBERS:
+- Santiago Duque Magaña
+Contribution: Creation of the GitHub repository, video editing, 
+implementation of changes in the memory allocation 
+algorithm (shared with Carlos R).
+
+- Carlos Rendon
+Contribution: Help with the implementation of changes 
+in the memory allocation algorithm.
+
+- Juan Carlos Fuentes
+Contribution: Help with the implementation of changes 
+in the CPU scheduling algorithm (shared with Alejandro E).
+
+- Alejandro Escudero
+Contribution: Help with the implementation of changes
+in the CPU scheduling algorithm and explanation of the original code.
+
+- Andres Felipe Buitron
+Contribution: Implementation of the change in the kalloc
+file to print to the console. Also helped with commands for the
+xv6 instructions and provided prior explanation of the original code.
+
+/***********************************************/
+
+MIT License and agreement:
+
 xv6 is a re-implementation of Dennis Ritchie's and Ken Thompson's Unix
 Version 6 (v6).  xv6 loosely follows the structure and style of v6,
 but is implemented for a modern RISC-V multiprocessor using ANSI C.
